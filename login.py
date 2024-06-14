@@ -8,6 +8,54 @@ from kivy.utils import get_color_from_hex
 from kivy.uix.image import Image ,AsyncImage
 from functools import partial
 from kivy.uix.modalview import ModalView
+import pyrebase
+
+# Configuração do Firebase
+config = {
+  "apiKey": "AIzaSyBbEV8hUZ4sLELpHmp9HPWsrKS9qxs6MCQ",
+  "authDomain": "login1-f85ff.firebaseapp.com",
+  "projectId": "login1-f85ff",
+  "storageBucket": "login1-f85ff.appspot.com",
+  "messagingSenderId": "781518658658",
+  "appId": "1:781518658658:web:88c6981e58fcbda5f5053b",
+  "measurementId": "G-RK7XL5L8BR"
+}
+
+# Inicializar o Firebase
+firebase = pyrebase.initialize_app(config)
+
+# Autenticação do Firebase
+auth = firebase.auth()
+
+# Função para criar um usuário
+def create_user(email, password):
+  try:
+    user = auth.create_user_with_email_and_password(email, password)
+    print("Usuário criado com sucesso!")
+    return user
+  except Exception as e:
+    print("Erro ao criar usuário:", e)
+
+# Função para criar um usuário no Realtime Database
+def create_user_in_db(user):
+  db = firebase.database()
+  data = {
+    "nome": "Seu Nome",
+    "email": user["email"]
+  }
+  db.child("usuarios").child(user["uid"]).set(data)
+  print("Usuário criado no Realtime Database com sucesso!")
+
+# Exemplo de uso
+email = "seu_email@example.com"
+password = "sua_senha"
+
+# Criar um usuário
+user = create_user(email, password)
+if user:
+  # Criar um usuário no Realtime Database
+  create_user_in_db(user)
+
 
 Window.size = 360, 640
 
